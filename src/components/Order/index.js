@@ -28,6 +28,23 @@ const getInitModelObject = () =>({
     resetFormControls
 } = useForm(getInitModelObject)
 
+  
+const addFoodItem = foodItem =>{
+  let x = {
+       orderMasterId: values.orderMasterId,
+       orderDetailId: 0,
+       foodItemId: foodItem.foodItemId,
+       quantity:1,
+       foodPrice: foodItem.foodPrice,
+       foodItemName: foodItem.foodItemName,
+  }
+
+  setValues({
+    ...values,
+    orderDetails: [...values.orderDetails, x]
+  })
+}
+
   return (
     <Grid container>
       <Grid item xs={12}>
@@ -37,7 +54,9 @@ const getInitModelObject = () =>({
       </Grid>
       
       <Grid item xs={6}>
-        <SearchFoodItem/>
+        <SearchFoodItem
+          {...{addFoodItem}}
+        />
       </Grid>
       <Grid item xs={6}>
         <OrderedFoodItems/>
