@@ -39,7 +39,9 @@ const useStyles = makeStyles(theme =>({
 
 export default function SearchFoodItem(props) {
 
-    const {addFoodItem} = props
+    const {  values, setValues} = props
+
+    let orderedFoodItems = values.orderDetails
 
     const [foodItems, setFoodItems] = useState([])
     const classes = useStyles()
@@ -59,11 +61,28 @@ export default function SearchFoodItem(props) {
         let x = [...foodItems];
         x = x.filter(y =>{
             return y.foodItemName.toLowerCase().includes(searchKey.toLocaleLowerCase())
+                && orderedFoodItems.every(item => item.foodItemId != y.foodItemId)
         })
 
         setSearchList(x)
-    },[searchKey])
+    },[searchKey, orderedFoodItems])
 
+      
+const addFoodItem = foodItem =>{
+    let x = {
+         orderMasterId: values.orderMasterId,
+         orderDetailId: 0,
+         foodItemId: foodItem.foodItemId,
+         quantity:1,
+         foodItemPrice: foodItem.price,
+         foodItemName: foodItem.foodItemName,
+    }
+  
+    setValues({
+      ...values,
+      orderDetails: [...values.orderDetails, x]
+    })
+  }
 
   return (
     <>
@@ -81,11 +100,12 @@ export default function SearchFoodItem(props) {
     <List className={classes.ListRoot}>
         {
             searchList.map((item,idx) =>(
-                <ListItem key ={idx}>
+                <ListItem key ={idx}  onClick={e => addFoodItem(item)}>
                     <ListItemText 
                         primary={item.foodItemName} 
                         secondary={'R'+item.price}
                     />
+
                         <ListItemSecondaryAction>
                             <IconButton onClick={e => addFoodItem(item)}>
                                 <PlusOneIcon/>
