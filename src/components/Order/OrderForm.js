@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme =>({
 
 export default function OrderForm(props) {
 
-    const {values, setValues, errors, handleInputChange} = props;
+    const {values, setValues, errors, setErrors, handleInputChange, resetFormControls} = props;
     const classes = useStyles()
 
     const [customerList, setCustomerList] = useState([])
@@ -69,8 +69,31 @@ export default function OrderForm(props) {
 
     },[JSON.stringify(values.orderDetails)])
 
+    const validForm = () =>{
+        let temp = {}
+        temp.customerId = values.customerId != 0? "": "This field is required"
+        temp.pMethod = values.pMethod != "none"? "": "This field is required"
+        temp.orderDetails = values.orderDetails.length != 0? "": "This field is required"
+        setErrors({...temp})
+
+        return Object.values(temp).every(x => x==="")
+    }
+
+    const submitOrder = e =>{
+        e.preventDefault()
+
+        if(validForm()){
+            createAPIEndpoint(ENDPOINTS.ORDER).create(values)
+            .then(res =>{
+                resetFormControls()
+                console.log(res)
+            })
+            .catch(err => console.log(err))
+        }
+    }
+
   return (
-    <Form >
+    <Form onSubmit={submitOrder}>
         <Grid container>
             <Grid item xs={6}>
                 <Input 
@@ -90,11 +113,19 @@ export default function OrderForm(props) {
                     name='customerId' 
                     value = {values.customerId} 
                     options={customerList} 
+                    error = {errors.customerId}
                 />
             </Grid>
 
             <Grid item xs={6}>
-                <Select label="Payment Method" onChange = {handleInputChange} name='pMethod' value={values.pMethod} options={pMethods} />
+                <Select 
+                    label="Payment Method" 
+                    onChange = {handleInputChange} 
+                    name='pMethod' 
+                    value={values.pMethod} 
+                    options={pMethods} 
+                    error = {errors.pMethod}
+                />
                 <Input 
                     disabled 
                     label ="Grand Total" 

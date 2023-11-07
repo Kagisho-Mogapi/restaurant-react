@@ -35,7 +35,13 @@ const getInitModelObject = () =>({
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <OrderForm 
-          {...{values, setValues, errors, handleInputChange}}
+          {...{values, 
+            setValues, 
+            errors, 
+            setErrors, 
+            handleInputChange, 
+            resetFormControls
+          }}
         />
       </Grid>
       
